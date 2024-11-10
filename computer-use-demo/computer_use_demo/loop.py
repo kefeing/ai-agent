@@ -29,7 +29,7 @@ from anthropic.types.beta import (
     BetaToolUseBlockParam,
 )
 
-from .tools import BashTool, ComputerTool, EditTool, ToolCollection, ToolResult
+from .tools import BashTool, ComputerTool, EditTool, ToolCollection, ToolResult, TaskManagementTool, TaskCreationTool
 
 COMPUTER_USE_BETA_FLAG = "computer-use-2024-10-22"
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
@@ -92,46 +92,49 @@ async def sampling_loop(
         ComputerTool(),
         BashTool(),
         EditTool(),
+        TaskManagementTool(),
+        TaskCreationTool(),
     )
-    system_prompt_suffix = """
-        Summarize the slack conversation between Kefei and me (Zack) and create Asana task accordingly
-
-        Open firefox browser if not open. wait for it to load, and then close all existing tabs to have a clean start.
-
-        open a new tab in the firefox browser, and go to slack.com
-
-        click 'LAUNCH SLACK' next to agiHouse channel. This will open another new tab, after the tab is open, close the old one.
-
-        In the new tab for slack, click 'use Slack in Browser' button
-
-        After the slack is loaded, on the left hand sidebar, select conversation with kefei
-
-        Wait for conversation to open read the conversation.
-
-        if you can't find any conversation, try to scroll down to the bottom.
-
-        summarize the conversation, we will need this info to create our Asana task. We will need four parts:
-        Description: a short summary.
-        Assignee: me
-        Due Date: due date
-        Details: a summary of the conversation
-
-        Show the summary for me to review before moving to next step
-
-        Now, create a new tab in firefox. go to asana.com. after it's loaded, click 'Open In Browser' button to open the asana page.
-
-        On the left hand side bar, click 'My Tasks' to open the my Tasks bar.
-
-        Then click the blue 'add Task' button to add a task.
-        Fill in the Description,
-        Assignee.
-        Select due date on the due date pop up button.
-        Put details in the comment section
-
-        After the task is created successfully,  copy the link.
-
-        In the firefox browser, click the agiHouse slack tab, and on the left hand side bar, click conversation with Zack Liu, and send the link to the conversation
-    """
+    system_prompt_suffix = ""
+    # system_prompt_suffix = """
+        # Summarize the slack conversation between Kefei and me (Zack) and create Asana task accordingly
+        # 
+        # Open firefox browser if not open. wait for it to load, and then close all existing tabs to have a clean start.
+        # 
+        # open a new tab in the firefox browser, and go to slack.com
+        # 
+        # click 'LAUNCH SLACK' next to agiHouse channel. This will open another new tab, after the tab is open, close the old one.
+        # 
+        # In the new tab for slack, click 'use Slack in Browser' button
+        # 
+        # After the slack is loaded, on the left hand sidebar, select conversation with kefei
+        # 
+        # Wait for conversation to open read the conversation.
+        # 
+        # if you can't find any conversation, try to scroll down to the bottom.
+        # 
+        # summarize the conversation, we will need this info to create our Asana task. We will need four parts:
+        # Description: a short summary.
+        # Assignee: me
+        # Due Date: due date
+        # Details: a summary of the conversation
+        # 
+        # Show the summary for me to review before moving to next step
+        # 
+        # Now, create a new tab in firefox. go to asana.com. after it's loaded, click 'Open In Browser' button to open the asana page.
+        # 
+        # On the left hand side bar, click 'My Tasks' to open the my Tasks bar.
+        # 
+        # Then click the blue 'add Task' button to add a task.
+        # Fill in the Description,
+        # Assignee.
+        # Select due date on the due date pop up button.
+        # Put details in the comment section
+        # 
+        # After the task is created successfully,  copy the link.
+        # 
+        # In the firefox browser, click the agiHouse slack tab, and on the left hand side bar, click conversation with Zack Liu, and send the link to the conversation
+    # """
     system = BetaTextBlockParam(
         type="text",
         text=f"{SYSTEM_PROMPT}{' ' + system_prompt_suffix if system_prompt_suffix else ''}",
@@ -167,6 +170,7 @@ async def sampling_loop(
         # we use raw_response to provide debug information to streamlit. Your
         # implementation may be able call the SDK directly with:
         # `response = client.messages.create(...)` instead.
+        # client.beta.messages.with_raw_response.create
         try:
             raw_response = client.beta.messages.with_raw_response.create(
                 max_tokens=max_tokens,
