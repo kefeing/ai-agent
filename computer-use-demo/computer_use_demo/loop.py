@@ -94,28 +94,43 @@ async def sampling_loop(
         EditTool(),
     )
     system_prompt_suffix = """
-        Summarize the slack conversation between Kefei and me (Zack) and create Asana task accordingly.
+        Summarize the slack conversation between Kefei and me (Zack) and create Asana task accordingly
 
-        Step 1: Open firefox browser if not open.
+        Open firefox browser if not open. wait for it to load, and then close all existing tabs to have a clean start.
 
-        Step 2: Open a new tab, go to asana.com.
+        open a new tab in the firefox browser, and go to slack.com
 
-        Step 3: on the left hand side bar, click 'My tasks'
+        click 'LAUNCH SLACK' next to agiHouse channel. This will open another new tab, after the tab is open, close the old one.
 
-        Step 4: open another new tab in the firefox browser, and go to slack.com
+        In the new tab for slack, click 'use Slack in Browser' button
 
-        Step 5: click 'LAUNCH SLACK' next to agiHouse channel. This will open another new tab, after the tab is open, close the old one.
+        After the slack is loaded, on the left hand sidebar, select conversation with kefei
 
-        Step 6: on the left hand sidebar, go to conversation with Kefei, and summarize the
-                conversation, we will need this info to create our task. We will need three parts to create the task
-                Description, Assignee, and Due Date.
+        Wait for conversation to open read the conversation.
 
-        Step 7: Go back to the Asana tab, create a new task with the above Description, Assignee, and Due Date, you need to
-                click on the 'Due Date' and select the date from the calendar pop up.
+        if you can't find any conversation, try to scroll down to the bottom.
 
-        Step 8: After the ticket is successfully created, copy the link.
+        summarize the conversation, we will need this info to create our Asana task. We will need four parts:
+        Description: a short summary.
+        Assignee: me
+        Due Date: due date
+        Details: a summary of the conversation
 
-        Step 9: Go to the slack tab, and on the left hand side bar, select Zack Liu, and paste the link and send a message to Zack
+        Show the summary for me to review before moving to next step
+
+        Now, create a new tab in firefox. go to asana.com. after it's loaded, click 'Open In Browser' button to open the asana page.
+
+        On the left hand side bar, click 'My Tasks' to open the my Tasks bar.
+
+        Then click the blue 'add Task' button to add a task.
+        Fill in the Description,
+        Assignee.
+        Select due date on the due date pop up button.
+        Put details in the comment section
+
+        After the task is created successfully,  copy the link.
+
+        In the firefox browser, click the agiHouse slack tab, and on the left hand side bar, click conversation with Zack Liu, and send the link to the conversation
     """
     system = BetaTextBlockParam(
         type="text",
