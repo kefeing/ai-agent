@@ -226,7 +226,7 @@ async def main():
                     response_state=st.session_state.responses,
                 ),
                 api_key=st.session_state.api_key,
-                only_n_most_recent_images=st.session_state.only_n_most_recent_images,
+                only_n_most_recent_images=5,
             )
 
 

@@ -83,7 +83,7 @@ async def sampling_loop(
     ],
     api_key: str,
     only_n_most_recent_images: int | None = None,
-    max_tokens: int = 4096,
+    max_tokens: int = 1024,
 ):
     """
     Agentic sampling loop for the assistant/tool interaction of computer use.
@@ -93,6 +93,30 @@ async def sampling_loop(
         BashTool(),
         EditTool(),
     )
+    system_prompt_suffix = """
+        Summarize the slack conversation between Kefei and me (Zack) and create Asana task accordingly.
+
+        Step 1: Open firefox browser if not open.
+
+        Step 2: Open a new tab, go to asana.com.
+
+        Step 3: on the left hand side bar, click 'My tasks'
+
+        Step 4: open another new tab in the firefox browser, and go to slack.com
+
+        Step 5: click 'LAUNCH SLACK' next to agiHouse channel. This will open another new tab, after the tab is open, close the old one.
+
+        Step 6: on the left hand sidebar, go to conversation with Kefei, and summarize the
+                conversation, we will need this info to create our task. We will need three parts to create the task
+                Description, Assignee, and Due Date.
+
+        Step 7: Go back to the Asana tab, create a new task with the above Description, Assignee, and Due Date, you need to
+                click on the 'Due Date' and select the date from the calendar pop up.
+
+        Step 8: After the ticket is successfully created, copy the link.
+
+        Step 9: Go to the slack tab, and on the left hand side bar, select Zack Liu, and paste the link and send a message to Zack
+    """
     system = BetaTextBlockParam(
         type="text",
         text=f"{SYSTEM_PROMPT}{' ' + system_prompt_suffix if system_prompt_suffix else ''}",
